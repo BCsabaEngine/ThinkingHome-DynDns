@@ -1,8 +1,12 @@
 DirectoryIndex index.php
 
-RewriteEngine on
-RewriteBase /
+<IfModule mod_rewrite.c>                                                                                                                                 
+  RewriteEngine on
+  RewriteBase /
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA]
+  RewriteRule \.inc$ - [R=404]                                                                                                                           
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php [QSA]
+</IfModule>                                                                                                                                              
