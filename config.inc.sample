@@ -1,0 +1,12 @@
+<?php
+  define('DBUSER', 'dyn');
+  define('DBPASS', 'dyn');
+  define('DBNAME', 'dyn);
+
+  define('CPANELHOST', 'cpanel.host.tld');
+  define('CPANELPORT', '2083');
+  define('CPANELUSER', 'cpanel');
+  define('CPANELTOKEN', 'token');
+
+  define('ROOTDOMAIN', 'maindomain.tld');
+?>
