@@ -64,7 +64,7 @@
         return $result->data[0];
     }
     
-    Route::add('/', function() { echo json_encode(["name" => 'ThinkingHome DynDNS service']); });
+    Route::add('/', function() { echo json_encode(["name" => ROOTDOMAIN . ' DynDNS service']); });
 
     Route::add('/update', function()
     {
@@ -88,7 +88,7 @@
             $rootdomain = ROOTDOMAIN;
             $fulldomain = "$subdomain.$rootdomain.";
             
-            $zoneinfos = ExecCPanel('ZoneEdit', 'fetchzone', ['domain' => 'thinkinghome.hu']);
+            $zoneinfos = ExecCPanel('ZoneEdit', 'fetchzone', ['domain' => ROOTDOMAIN]);
                 
             $found_address = false;
             $found_line = false;
@@ -102,7 +102,7 @@
             $updated = false;
             if (!$found_address)
             {
-                $cpresult = ExecCPanel('ZoneEdit', 'add_zone_record', ['domain' => 'thinkinghome.hu', 'type' => 'A', 'name' => $subdomain, 'address' => $ip, 'ttl' => 3600]);
+                $cpresult = ExecCPanel('ZoneEdit', 'add_zone_record', ['domain' => ROOTDOMAIN, 'type' => 'A', 'name' => $subdomain, 'address' => $ip, 'ttl' => 3600]);
                 if ($statusmsg = trim($cpresult->result->statusmsg))
                     throw new Exception("Cannot execute zone add: $statusmsg");
                 $updated = true;
@@ -110,7 +110,7 @@
             else
                 if ($found_address != $ip)
                 {
-                    $cpresult = ExecCPanel('ZoneEdit', 'edit_zone_record', ['line' => $found_line, 'domain' => 'thinkinghome.hu', 'type' => 'A', 'name' => $subdomain, 'address' => $ip, 'ttl' => 3600]);
+                    $cpresult = ExecCPanel('ZoneEdit', 'edit_zone_record', ['line' => $found_line, 'domain' => ROOTDOMAIN, 'type' => 'A', 'name' => $subdomain, 'address' => $ip, 'ttl' => 3600]);
                     if ($statusmsg = trim($cpresult->result->statusmsg))
                         throw new Exception("Cannot execute zone edit: $statusmsg");
                     $updated = true;
