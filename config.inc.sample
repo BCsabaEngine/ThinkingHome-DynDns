@@ -9,4 +9,7 @@
   define('CPANELTOKEN', 'token');
 
   define('ROOTDOMAIN', 'maindomain.tld');
+
+  define('TTS_REGION', 'westus');
+  define('TTS_KEY', 'XXXXXXXXXXXXXXXXX');
 ?>
