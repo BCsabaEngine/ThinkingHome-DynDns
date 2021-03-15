@@ -153,4 +153,67 @@
         
         return DBStatement($query, $p);
     }
+
+    function DBAutoUpdate($tablename, array $values, array $keys = null)
+    {
+        $fv = array();
+        $fk = array();
+        $p = array();
+
+        $index = 1;
+        foreach($values as $key => $value)
+        {
+            if (StartsWith($value, 'mysql:'))
+            {
+                $fv[] = "$key = " . substr($value, strlen('mysql:'));
+            }
+            else
+            {
+                $pname = ":p$index";
+                $fv[] = "$key = $pname";
+                $p[$pname] = $value;
+            }
+            
+            $index++;
+        }
+        foreach($keys as $key => $value)
+        {
+            $pname = ":p$index";
+            $fk[] = "$key = $pname";
+            $p[$pname] = $value;
+
+            $index++;
+        }
+        
+        $fv = implode(', ', $fv);
+        $fk = implode(' AND ', $fk);
+        if ($fk)
+            $fk = " WHERE $fk";
+        $query = "UPDATE $tablename SET $fv $fk";
+        
+        return DBStatement($query, $p);
+    }
+
+    function DBAutoDelete($tablename, array $keys = null)
+    {
+        $fk = array();
+        $p = array();
+
+        $index = 1;
+        foreach($keys as $key => $value)
+        {
+            $pname = ":p$index";
+            $fk[] = "$key = $pname";
+            $p[$pname] = $value;
+
+            $index++;
+        }
+        
+        $fk = implode(' AND ', $fk);
+        if ($fk)
+            $fk = " WHERE $fk";
+        $query = "DELETE FROM $tablename $fk";
+        
+        return DBStatement($query, $p);
+    }
 ?>
