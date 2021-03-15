@@ -110,6 +110,19 @@
         echo $voice;
     }, 'post');
 
+/*
+    Route::add('/DUMMMY/tts', function()
+    {
+        if (!$text = $_GET['text'])
+            return SendError('Text mandatory', 500);
+        
+        $voice = MSTTS($text);
+        header('Content-Type: application/mp3');
+        header('Content-Disposition: attachment; filename=voice.mp3');
+        echo $voice;
+    }, 'get');
+*/
+
     Route::add('/checktoken', function()
     {
         if (!$token = $_POST['token'])
@@ -125,6 +138,44 @@
             $settlement = $settlements[0];
             
             echo json_encode(['status' => 'success', 'name' => $settlement->Name, 'domain' => $settlement->SubDomain ? ($settlement->SubDomain . '.' . ROOTDOMAIN) : '']);
+        }
+        catch(Exception $ex)
+        {
+            error_log($ex);
+            return SendError($ex->getMessage(), 500);
+        }
+    }, 'post');
+
+    Route::add('/checkdyndnsremote', function()
+    {
+        if (!$token = $_POST['token'])
+            return SendError('TOKEN mandatory', 500);
+            
+        try
+        {
+            include_once('db.inc');
+            
+            if (!$settlements = DBSelect('SELECT s.Name, s.SubDomain FROM Settlement s WHERE s.Token = :token', [':token' => $token]))
+                return SendError('TOKEN invalid', 403);
+                
+            $settlement = $settlements[0];
+            
+            if (!$domain = $settlement->SubDomain ? ('https://' . $settlement->SubDomain . '.' . ROOTDOMAIN) : '')
+            {
+                echo json_encode(['status' => 'error', 'text' => 'DOMAIN not assigned']);
+                return;
+            }
+
+            $starttime = microtime(true);
+            $content = file_get_contents($domain);
+            if ($content === false)
+            {
+                echo json_encode(['status' => 'error', 'text' => "Cannot access $domain"]);
+                return;
+            }
+            $endtime = microtime(true);
+            
+            echo json_encode(['status' => 'success', 'domain' => $domain, 'time' => round(1000 * ($endtime - $starttime))]);
         }
         catch(Exception $ex)
         {
