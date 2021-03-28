@@ -62,7 +62,7 @@
           $path_match_found = true;
 
           // Check method match
-          if(strtolower($method) == strtolower($route['method'])){
+          if(strpos(strtolower($route['method']), strtolower($method)) !== false){
 
             array_shift($matches);// Always remove first element. This contains the whole string
 

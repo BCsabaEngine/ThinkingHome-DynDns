@@ -125,7 +125,7 @@
 
     Route::add('/checktoken', function()
     {
-        if (!$token = $_POST['token'])
+        if (!$token = ($_POST['token'] ?? $_GET['token']))
             return SendError('TOKEN mandatory', 500);
             
         try
@@ -137,14 +137,14 @@
                 
             $settlement = $settlements[0];
             
-            echo json_encode(['status' => 'success', 'name' => $settlement->Name, 'domain' => $settlement->SubDomain ? ($settlement->SubDomain . '.' . ROOTDOMAIN) : '']);
+            echo json_encode(['status' => 'success', 'name' => $settlement->Name, 'subdomain' => $settlement->SubDomain, 'domain' => $settlement->SubDomain ? ($settlement->SubDomain . '.' . ROOTDOMAIN) : '']);
         }
         catch(Exception $ex)
         {
             error_log($ex);
             return SendError($ex->getMessage(), 500);
         }
-    }, 'post');
+    }, 'get+post');
 
     Route::add('/checkdyndnsremote', function()
     {
